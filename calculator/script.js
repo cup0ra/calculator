@@ -25,12 +25,16 @@ class Calculator {
         this.currentValue.innerText = this.currentValue.innerText.slice(0, -1);
     }
     addCurrentNumber = (value) => {
+        if(this.currentValue.innerText === '' && value === '.' || this.currentValue.innerText === '-' && value === '.') {
+            this.currentValue.innerText += '0.' 
+            this.resultReset = true;
+        }
         if(value === '.' && this.currentValue.innerText.includes('.')) return;
-        if(value === '.' && this.currentValue.innerText === '') return;
         if(this.currentValue.innerText === '0' && value === '0') return
         if(this.currentValue.innerText === '0' && value !== '.') {
             this.currentValue.innerText = '' 
         }
+       
         if(this.resultReset === false){
             this.currentValue.innerText = ''  
         }
@@ -38,6 +42,9 @@ class Calculator {
         this.resultReset = true;
     }
     addOperationValue = (value) => {
+        if(this.currentValue.innerText ===  'Error' || isNaN(this.currentValue.innerText)){
+            this.currentValue.innerText =  ''
+        }
        if(this.currentValue.innerText === '-') return
        if(this.previousValue.innerText === '' && this.currentValue.innerText === '' &&  value !== '-') return;
        if(this.previousValue.innerText !== '' && this.currentValue.innerText === '' &&  value !== '-' && this.operation) return;
@@ -71,10 +78,15 @@ class Calculator {
             this.previousValue.innerText = '';
             this.resultReset = false;
         }
-        
     }
     showResult = () => {
-        if(this.previousValue.innerText !== '' && this.currentValue.innerText ==='' && this.operation) return;
+        if(this.previousValue.innerText === '' && this.currentValue.innerText ==='') return;
+        if(this.previousValue.innerText !== '' && this.currentValue.innerText ==='' && this.operation) {
+            this.currentValue.innerText = parseFloat(this.previousValue.innerText);
+        }
+        if(this.currentValue.innerText === '-'){
+            this.currentValue.innerText = '0'; 
+        }
         this.prev = parseFloat(this.previousValue.innerText);
         this.curr = parseFloat(this.currentValue.innerText);
         if(this.operation === '+'){
@@ -92,7 +104,6 @@ class Calculator {
         if(this.operation === '^'){
             this.currentValue.innerText = this.prev ** this.curr;
         }
-        console.log(this.operation)
         this.previousValue.innerText = '';
         this.operation = undefined;
         this.resultReset = false;
